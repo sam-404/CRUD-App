@@ -192,8 +192,8 @@ app.put('/rooms/:room_no', (req, res)=>{
     let room_no = req.params.room_no;
     let room_type = req.body.room_type;
     let fur_id = req.body.furniture_id
-    
-    let sql = 'update student set room_type= ?, furniture_id = ? where room_no = ?';
+
+    let sql = 'update room set room_type= ?, furniture_id = ? where room_no = ?';
 
     db.query(sql, [room_type, fur_id, room_no], (err, result)=>{
         if(err){console.log(err);}
@@ -210,7 +210,104 @@ app.delete('/rooms/:room_no', (req, res)=>{
 
     let id = req.params.room_no;
 
-    let sql = 'delete from student where room_no = ?';
+    let sql = 'delete from room where room_no = ?';
+    db.query(sql, [id], (err, result)=>{
+        if(err){console.log(err);}
+        res.send({
+           message:'data deleted'
+       });
+
+    });
+
+});
+
+//getting all employees data
+app.get('/employees', (req, res)=>{
+    let sql = 'select * from mess_employees';
+    db.query(sql, (err, result) =>{
+        if(err){
+            throw err;
+        }
+        console.log(result);
+        res.send(result);
+    });
+});
+
+//getting data for a singular ID
+app.get('/employees/:emp_id', (req, res) =>{
+    let mID = req.params.emp_id;
+    let sql = 'select * from mess_employees where emp_id = ?';
+    db.query(sql, [mID], (err, result) => {
+        if(err){
+            (console.log(err));
+        }
+        if(result.length>0){
+            res.send({
+                message:'get single data',
+                data:result
+            });
+        }
+        else{
+            res.send({
+                message:'data not found'
+            });
+        }
+    });
+});
+
+
+//create employee data
+app.post('/employees', (req, res)=>{
+    console.log(req.body, 'createdata');
+
+    let emp_id = req.body.emp_id;
+    let emp_name = req.body.emp_name;
+    let emp_phno = req.body.emp_phone_no;
+    let emp_cnic = req.body.emp_cnic;
+    let emp_salary = req.body.emp_salary;
+    let bld_name = req.body.building_name;
+    
+    
+    let sql = 'insert into mess_employees(emp_id, emp_name, emp_phone_no, emp_cnic, emp_salary, building_name) values(?,?,?,?,?,?)'; 
+
+    db.query(sql, [emp_id, emp_name, emp_phno, emp_cnic, emp_salary, bld_name], (err, result)=>{
+        if(err){console.log(err);}
+        console.log(result, 'result')
+       res.send({
+           message:'data inserted',
+       });
+    });
+});
+
+// update room data
+app.put('/employees/:emp_id', (req, res)=>{
+    console.log(req.body, 'updatedata');
+    
+    let emp_id = req.params.emp_id;
+    let emp_name = req.body.emp_name;
+    let emp_phno = req.body.emp_phone_no;
+    let emp_cnic = req.body.emp_cnic;
+    let emp_salary = req.body.emp_salary;
+    let bld_name = req.body.building_name;
+
+    let sql = 'update mess_employees set emp_name = ?, emp_phone_no = ?, emp_cnic = ?, emp_salary = ?, building_name = ? where emp_id = ?';
+
+    db.query(sql, [emp_name, emp_phno, emp_cnic, emp_salary, bld_name, emp_id], (err, result)=>{
+        if(err){console.log(err);}
+        res.send({
+           message:'data updated',
+       });
+    });
+
+});
+
+//delete employees data
+app.delete('/employees/:emp_id', (req, res)=>{
+    console.log(req.body, 'deletedata');
+
+    let id = req.params.emp_id;
+
+    let sql = 'delete from mess_employees where emp_id = ?';
     db.query(sql, [id], (err, result)=>{
         if(err){console.log(err);}
         res.send({
